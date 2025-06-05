@@ -87,7 +87,8 @@ function filtersDisplay() {
 /*** Activation du mode édition si connecté ***/
 const token = localStorage.getItem("token");
 if (token) {
-  activateEditMode(); /** Si token actif ***/
+  activateEditMode();
+  fetchWorks();
 }
 
 /** Remplacer login par logout + barre d'édition ***/
@@ -103,12 +104,13 @@ function activateEditMode() {
       li.textContent = "logout";
       li.addEventListener("click", () => {
         localStorage.removeItem("token");
-        window.location.reload();
+        li.textContent = "login"; // Remettre login
+        location.href = "index.html"; // Revenir à la page d'accueil
       });
     }
   });
 
-  /**  Afficher le lien "modifier" à côté du titre ***/
+  /***  Afficher le lien "modifier" à côté du titre ***/
   const edit = document.querySelector("#portfolio .edit-portfolio");
   if (edit) {
     edit.style.display = "inline-flex";
@@ -204,6 +206,7 @@ openAddViewBtn.addEventListener("click", () => {
 backBtn.addEventListener("click", () => {
   addView.classList.add("hidden");
   galleryView.classList.remove("hidden");
+  resetModalForm();
 });
 
 /*** Affichage des travaux dans la modale galerie ***/
@@ -401,7 +404,12 @@ function handleImageChange(e) {
   const file = e.target.files[0];
   const imageError = document.getElementById("image-error");
 
-  if (file && file.type.startsWith("image/")) {
+  if (
+    file &&
+    file.type.startsWith("image/") &&
+    (file.type === "image/jpeg" || file.type === "image/png") &&
+    file.size <= 4 * 1024 * 1024
+  ) {
     const reader = new FileReader();
     reader.onload = function (event) {
       let previewImg = document.querySelector(".preview");
@@ -409,9 +417,10 @@ function handleImageChange(e) {
       if (!previewImg) {
         previewImg = document.createElement("img");
         previewImg.classList.add("preview");
-        previewImg.style.maxWidth = "30%";
-        previewImg.style.maxHeight = "100%";
+        previewImg.style.Width = "100%";
+        previewImg.style.Height = "100%";
         previewImg.style.objectFit = "contain";
+        previewImg.style.display = "block";
         previewImg.style.margin = "10px auto";
 
         const uploadZone = document.querySelector(".upload-zone");
@@ -430,11 +439,33 @@ function handleImageChange(e) {
       imageError.textContent = "";
       imageSelected = true;
       activerSubmitSiValide();
+
+      // Permet de supprimer l'image si on clique sur la zone
+      const uploadZone = document.querySelector(".upload-zone");
+      uploadZone.onclick = function () {
+        const previewImg = document.querySelector(".preview");
+        if (previewImg && !previewImg.classList.contains("hidden")) {
+          previewImg.remove(); // supprime la preview
+          imageSelected = false;
+          document.querySelector(".upload-label").style.display = "flex";
+          document.querySelector(".upload-info").style.display = "block";
+          document.getElementById("image-upload").value = ""; // reset l'input
+          activerSubmitSiValide();
+        }
+      };
     };
     reader.readAsDataURL(file);
   } else {
     imageSelected = false;
-    imageError.textContent = "Veuillez ajouter une image valide.";
+
+    if (!file) {
+      imageError.textContent = "Veuillez ajouter une image.";
+    } else if (file.type !== "image/jpeg" && file.type !== "image/png") {
+      imageError.textContent = "Format invalide (jpg ou png uniquement).";
+    } else if (file.size > 4 * 1024 * 1024) {
+      imageError.textContent = "Image trop lourde (max 4 Mo).";
+    }
+
     activerSubmitSiValide();
   }
 }
@@ -471,5 +502,15 @@ function activerSubmitSiValide() {
 document
   .getElementById("image-upload")
   .addEventListener("change", handleImageChange);
+
+// Forcer le scroll sur #contact si l'URL contient #contact
+window.addEventListener("load", () => {
+  if (window.location.hash === "#contact") {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+});
 
 fetchWorks();

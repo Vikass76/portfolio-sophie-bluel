@@ -91,6 +91,7 @@ video {
   font: inherit;
   vertical-align: baseline;
   background-color: #fffef8;
+  scroll-behavior: smooth;
 }
 /* HTML5 display-role reset for older browsers */
 article,
@@ -198,6 +199,7 @@ nav ul {
 nav li {
   padding: 0 10px;
   font-size: 1.2em;
+  cursor: pointer;
 }
 
 li:hover {
@@ -308,6 +310,7 @@ nav li a.active {
 #contact {
   width: 50%;
   margin: auto;
+  scroll-margin-top: 100px;
 }
 #contact > * {
   text-align: center;
