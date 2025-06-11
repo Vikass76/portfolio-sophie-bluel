@@ -60,6 +60,18 @@ function worksDisplay(worksToDisplay) {
     .join("");
 }
 
+/***** Récupération des catégories depuis l'API *****/
+async function fetchCategories() {
+  try {
+    const response = await fetch("http://localhost:5678/api/categories");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des catégories :", error);
+    return [];
+  }
+}
+
 /*** Extraction des catégories uniques ***/
 function getCategories() {
   allWorks.forEach((work) => {
@@ -159,6 +171,23 @@ modal.addEventListener("click", (e) => {
   }
 });
 
+/*** Passer à la vue "Ajout photo" ***/
+openAddViewBtn.addEventListener("click", () => {
+  galleryView.classList.add("hidden");
+  addView.classList.remove("hidden");
+
+  fetchCategories().then((cats) => {
+    remplirSelectCategories(cats);
+  });
+});
+
+/*** Revenir à la vue "Galerie photo" avec la flèche ***/
+backBtn.addEventListener("click", () => {
+  addView.classList.add("hidden");
+  galleryView.classList.remove("hidden");
+  resetModalForm();
+});
+
 /*** Supprimer les données de la modale ***/
 function resetModalForm() {
   form.reset();
@@ -191,23 +220,6 @@ function resetModalForm() {
   const newInput = document.getElementById("image-upload");
   newInput.addEventListener("change", handleImageChange);
 }
-
-/*** Passer à la vue "Ajout photo" ***/
-openAddViewBtn.addEventListener("click", () => {
-  galleryView.classList.add("hidden");
-  addView.classList.remove("hidden");
-
-  fetchCategories().then((cats) => {
-    remplirSelectCategories(cats);
-  });
-});
-
-/*** Revenir à la vue "Galerie photo" avec la flèche ***/
-backBtn.addEventListener("click", () => {
-  addView.classList.add("hidden");
-  galleryView.classList.remove("hidden");
-  resetModalForm();
-});
 
 /*** Affichage des travaux dans la modale galerie ***/
 function displayWorksInModal() {
@@ -249,7 +261,7 @@ function displayWorksInModal() {
           allWorks = allWorks.filter((work) => work.id !== parseInt(workId));
           worksDisplay(allWorks);
         } else {
-          errorMsg.textContent = "Identifiant ou mot de passe incorrect";
+          errorMsg.textContent = "Échec de la suppression du projet";
         }
       } catch (error) {
         console.error("Erreur :", error);
@@ -261,18 +273,6 @@ function displayWorksInModal() {
 /***** Création de l'image preview *****/
 const imagePreview = document.createElement("img");
 imagePreview.classList.add("preview");
-
-/***** Récupération des catégories depuis l'API *****/
-async function fetchCategories() {
-  try {
-    const response = await fetch("http://localhost:5678/api/categories");
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des catégories :", error);
-    return [];
-  }
-}
 
 /***** Remplissage du select de catégories *****/
 function remplirSelectCategories(categories) {
