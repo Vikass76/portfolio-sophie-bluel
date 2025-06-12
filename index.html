@@ -32,7 +32,7 @@
     <main>
       <section id="introduction">
         <figure>
-          <img src="./assets/images/sophie-bluel.png" alt="" />
+          <img src="./assets/images/sophie-bluel.png" alt="Sophie Bluel" />
         </figure>
         <article>
           <h2>Designer d'espace</h2>
@@ -103,7 +103,7 @@
           <h3>Ajout photo</h3>
           <form class="modal-form">
             <div class="upload-zone">
-              <img class="preview hidden" />
+              <img class="preview hidden" src="#" alt="Prévisualisation" />
               <label for="image-upload" class="upload-label">
                 <i class="fa-regular fa-image"></i>
                 <span>+ Ajouter photo</span>
@@ -117,12 +117,14 @@
               <p class="upload-info">jpg, png : 4mo max</p>
             </div>
             <p id="image-error" class="error-message"></p>
-            <label for="Title">Titre</label>
+            <label for="title">Titre</label>
             <input type="text" id="title" name="title" />
             <p id="title-error" class="title-message error-message"></p>
             <label for="category">Catégorie</label>
             <select id="category">
-              <option value="" disabled selected hidden></option>
+              <option value="" disabled selected hidden>
+                -- Choisir une catégorie --
+              </option>
             </select>
             <p id="category-error" class="category-message error-message"></p>
             <button type="submit" id="submit-photo" class="submit-photo">
